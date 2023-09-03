@@ -1,0 +1,35 @@
+getSortieDemande
+                   @foreach ($products as$key=> $product)
+                   @php
+                        $output=$product->getSortieAmbulantDate($product->id,$currentDate)+
+                        $product->getSortieDemandeDate($product->id,$currentDate);
+
+                    @endphp
+                      @if ($output>0)
+                      <tr>
+                        <td class="text-left">{{$product->name}}</td>
+                        <td class="text-center">{{$product->quantity}}</td>
+                        <td class="text-center">
+                            {{
+                                $product->getSortieAmbulantDate($product->id,$currentDate)+
+                                $product->getSortieDemandeDate($product->id,$currentDate)
+                            }}
+                        </td>
+                        <td class="text-center">
+                            {{$product->getEntreesMonth($product->id,$currentMonth)}}
+                        </td>
+                        <td class="text-center">
+                            @if (
+                                $product->quantity+
+                                $product->getEntreesMonth($product->id,$currentMonth)-($product->getSortieAmbulantDate($product->id,$currentDate))<=0)
+                            <span class="text-danger">Vide</span>
+                            @else
+                                {{($product->quantity+$product->getEntreesMonth($product->id,$currentMonth))
+                                    -$product->getSortieAmbulantDate($product->id,$currentDate)
+                                    -$product->getSortieDemandeDate($product->id,$currentDate)}}
+                            @endif
+
+                        </td>
+                    </tr>
+                      @endif
+                   @endforeach

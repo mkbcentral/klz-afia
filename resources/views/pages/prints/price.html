@@ -1,0 +1,85 @@
+
+µDOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Impression liste des prduits</title>
+    <style>
+        .center {
+            text-align: center;
+        }
+        table, td, th {
+            border: 1px solid black;
+            font-size: 18px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+    </style>
+</head>
+<body>
+    <div class="entete" style="margin-left: 250px">
+        <img  src="entete.png" alt="">
+    </div>
+    <div style="text-align: center;padding: 15px;font-size: 20px"><span>RAPPORT DU STOCK DE LA PHARMACIE POUR L'INVENTAIRE REALISE EN DATEw DU 02/09/2021</span></div>
+    <div>
+        <table class="" style="margin-left: 25px">
+            <thead class="">
+                <tr>
+                    <th>N°</th>
+                    <th>DESIGNATION</th>
+                    <th style="text-align: center">SOTCK</th>
+                    <th style="text-align: center">QT ENTREE</th>
+                    <th>QT SORTIE</th>
+                    <th>QT DISPO</th>
+                    <th>DATE D'EXP.</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($products as $key => $product)
+                    <tr>
+                        <td style="text-align: center">{{ $key+1 }}</td>
+                        <td>{{ $product->name }}</td>
+                        <td style="text-align: center">{{ $product->quantity }}</td>
+                        @if ($product->getEntrees($product->id) < 1)
+                        <td style="text-align: center">0</td>
+                        @else
+                            <td style="text-align: center;background: #4c3fc96e">{{ $product->getEntrees($product->id) }}</td>
+                        @endif
+
+                        @if ( $product->getSortieService($product->id) + $product->getSortieDemande($product->id)+$product->getSortieAmbulant($product->id) < 1)
+                            <td style="text-align: center">
+                                0
+                            </td>
+                        @else
+                            <td style="text-align: center;background: rgb(84, 246, 125)">
+                                {{$product->getSortieService($product->id) + $product->getSortieDemande($product->id)+$product->getSortieAmbulant($product->id) }}
+                            </td>
+                        @endif
+
+                        @if ($product->quantity+$product->getEntrees($product->id)-$product->getSortieService($product->id)-$product->getSortieDemande($product->id)-$product->getSortieAmbulant($product->id) < 1)
+                            <td style="text-align: right;background: yellow">
+                                    0
+                            </td>
+                        @else
+                            <td style="text-align: right;background: #57d4f311">
+                                {{ $product->quantity+$product->getEntrees($product->id)-$product->getSortieService($product->id)-$product->getSortieDemande($product->id)-$product->getSortieAmbulant($product->id) }}
+                            </td>
+                        @endif
+                        @if ((new DateTime($product->expirated_at))->format('Y')== date('Y'))
+                            <td style="text-align: right;background: #f86464">{{ (new DateTime($product->expirated_at))->format('M/Y') }}</td>
+                        @else
+                            <td style="text-align: right">{{ (new DateTime($product->expirated_at))->format('M/Y') }}</td>
+                        @endif
+
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+</body>
+</html>
